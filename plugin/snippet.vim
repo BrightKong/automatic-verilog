@@ -1,10 +1,10 @@
 "-----------------------------------------------------------------------------
 " Vim Plugin for Verilog Code Automactic Generation 
-" Author:         HonkW
-" Website:        https://honk.wang
-" Last Modified:  2022/08/05 21:28
+" Author:         Bright
+" Email:          guanghuikong@163.com
+" Last Modified:  2026/05/01 21:04
 " File:           snippet.vim
-" Note:           Snippet function partly from zhangguo's vimscript,partly from load_template
+" Note:           Snippet function partly from Bright's vimscript,partly from load_template
 "------------------------------------------------------------------------------
 
 "Sanity checks 启动判断{{{1
@@ -25,24 +25,18 @@ endfunction
 
 "Defaults 默认设置{{{1
 let g:_ATV_SNIPPET_DEFAULTS = {
-            \'author':      'HonkW',
+            \'author':      'Bright',
             \'company':     'NB Co.,Ltd.',
             \'project':     'IC_Design',
             \'device':      'Xilinx',
-            \'email':       'contact@honk.wang',
-            \'website':     'honk.wang',
-            \'albpp_file':  expand("<sfile>:p:h").'/template/albpp.v',
-            \'albpp_pos':   '4,13',
+            \'email':       'guanghuikong@163.com',
+            \'website':     '',
             \'albpn_file':  expand("<sfile>:p:h").'/template/albpn.v',
-            \'albpn_pos':   '4,13',
-            \'albnn_file':  expand("<sfile>:p:h").'/template/albnn.v',
-            \'albnn_pos':   '4,13',
-            \'albn_file':   expand("<sfile>:p:h").'/template/albn.v',
-            \'albn_pos':    '4,13',
-            \'albp_file':   expand("<sfile>:p:h").'/template/albp.v',
-            \'albp_pos':    '4,13',
+            \'albpn_pos':   '3,13',
             \'alb_file':    expand("<sfile>:p:h").'/template/alb.v',
-            \'alb_pos':     '3,9',
+            \'alb_pos':     '2,9',
+            \'fsm3_file':   expand("<sfile>:p:h").'/template/fsm3.v',
+            \'fsm3_pos':    '42,21',
             \'att_file':    expand("<sfile>:p:h").'/template/auto_template.v',
             \'att_en':      0
             \}
@@ -50,19 +44,16 @@ for s:key in keys(g:_ATV_SNIPPET_DEFAULTS)
     if !exists('g:atv_snippet_' . s:key)
         let g:atv_snippet_{s:key} = copy(g:_ATV_SNIPPET_DEFAULTS[s:key])
     endif
-    if s:key =~ 'alb.*_file'
+    if s:key =~ '_file'
         let g:atv_snippet_{s:key} = expand(g:atv_snippet_{s:key})
     endif
 endfor
 "}}}1
 
 "Menu&Mapping 菜单栏和快捷键{{{1
-amenu &Verilog.Code.Always@.always\ @(posedge\ or\ posedge)<TAB><<Leader>al>    :call <SID>AlBpp()<CR>
-amenu &Verilog.Code.Always@.always\ @(posedge\ or\ negedge)                     :call <SID>AlBpn()<CR>
-amenu &Verilog.Code.Always@.always\ @(*)                                        :call <SID>AlB()<CR>
-amenu &Verilog.Code.Always@.always\ @(negedge\ or\ negedge)                     :call <SID>AlBnn()<CR>
-amenu &Verilog.Code.Always@.always\ @(posedge)                                  :call <SID>AlBp()<CR>
-amenu &Verilog.Code.Always@.always\ @(negedge)                                  :call <SID>AlBn()<CR>
+amenu &Verilog.Code.Always@.always_ff\ @(posedge\ i_clk\ or\ negedge\ i_rst_n)<TAB><<Leader>al> :call <SID>AlBpn()<CR>
+amenu &Verilog.Code.Always@.always_comb                                         :call <SID>AlB()<CR>
+amenu &Verilog.Code.FSM.Three-stage\ FSM<TAB><<Leader>fsm>                      :call <SID>Fsm3()<CR>
 amenu &Verilog.Code.Header.AddHeader<TAB><<Leader>hd>                           :call <SID>AddHeader()<CR>
 amenu &Verilog.Code.Comment.SingleLineComment<TAB><<Leader>//>                  :call <SID>AutoComment()<CR>
 amenu &Verilog.Code.Comment.MultiLineComment<TAB>Visual-Mode\ <<Leader>/*>      <Esc>:call <SID>AutoComment2()<CR>
@@ -71,7 +62,10 @@ if !hasmapto('<Leader>hd')
     nnoremap <Leader>hd                                                 :call <SID>AddHeader()<CR>
 endif
 if !hasmapto('<Leader>al')
-    nnoremap <Leader>al                                                 :call <SID>AlBpp()<CR>
+    nnoremap <Leader>al                                                 :call <SID>AlBpn()<CR>
+endif
+if !hasmapto('<Leader>fsm')
+    nnoremap <Leader>fsm                                                :call <SID>Fsm3()<CR>
 endif
 if !hasmapto('<Leader>//','n')
     nnoremap <Leader>//                                                 :call <SID>AutoComment()<CR>
@@ -83,12 +77,9 @@ if !hasmapto('<Leader>/e')
     nnoremap <Leader>/e                                                 :call <SID>AddCurLineComment()<CR>
 endif
 noremap <script> <Plug>Atv_Snippet_AddHeader;                           :call <SID>AddHeader()<CR>
-noremap <script> <Plug>Atv_Snippet_AlBpp;                               :call <SID>AlBpp()<CR>
 noremap <script> <Plug>Atv_Snippet_AlBpn;                               :call <SID>AlBpn()<CR>
 noremap <script> <Plug>Atv_Snippet_AlB;                                 :call <SID>AlB()<CR>
-noremap <script> <Plug>Atv_Snippet_AlBnn;                               :call <SID>AlBnn()<CR>
-noremap <script> <Plug>Atv_Snippet_AlBp;                                :call <SID>AlBp()<CR>
-noremap <script> <Plug>Atv_Snippet_AlBn;                                :call <SID>AlBn()<CR>
+noremap <script> <Plug>Atv_Snippet_Fsm3;                                :call <SID>Fsm3()<CR>
 noremap <script> <Plug>Atv_Snippet_AutoComment;                         :call <SID>AutoComment()<CR>
 noremap <script> <Plug>Atv_Snippet_AutoComment2;                        <Esc>:call <SID>AutoComment2()<CR>
 noremap <script> <Plug>Atv_Snippet_AddCurLineComment;                   :call <SID>AddCurLineComment()<CR>
@@ -172,6 +163,7 @@ endfunction "}}}2
 "AutoTemplate{{{1
 augroup filetype_verilog
     autocmd BufNewFile *.v call s:AutoTemplate()
+    autocmd BufNewFile *.sv call s:AutoTemplate()
 augroup END
 
 function s:AutoTemplate() "{{{2
@@ -189,7 +181,7 @@ function s:AutoTemplate() "{{{2
     let tpl_lines = []
     for line in lines
         if line =~ '\$module_name'
-            let line = substitute(line,'\$module_name',matchstr(expand("%"),'\w\+'),'')
+            let line = substitute(line,'\$module_name',expand("%:t:r"),'')
         endif
         call add(tpl_lines,line)
     endfor
@@ -199,14 +191,6 @@ endfunction "}}}2
 
 "Always Block
 
-function s:AlBpp() "{{{1
-    let lines = readfile(g:atv_snippet_albpp_file)
-    let lnum = line(".")-1
-    call append(lnum,lines)
-    let pos = split(g:atv_snippet_albpp_pos,',')
-    call cursor(lnum+pos[0],pos[1])
-endfunction "}}}1
-
 function s:AlBpn() "{{{1
     let lines = readfile(g:atv_snippet_albpn_file)
     let lnum = line(".")-1
@@ -215,35 +199,19 @@ function s:AlBpn() "{{{1
     call cursor(lnum+pos[0],pos[1])
 endfunction "}}}1
 
-function s:AlBnn() "{{{1
-    let lines = readfile(g:atv_snippet_albnn_file)
-    let lnum = line(".")-1
-    call append(lnum,lines)
-    let pos = split(g:atv_snippet_albnn_pos,',')
-    call cursor(lnum+pos[0],pos[1])
-endfunction "}}}1
-
-function s:AlBp() "{{{1
-    let lines = readfile(g:atv_snippet_albp_file)
-    let lnum = line(".")-1
-    call append(lnum,lines)
-    let pos = split(g:atv_snippet_albp_pos,',')
-    call cursor(lnum+pos[0],pos[1])
-endfunction "}}}1
-
-function s:AlBn() "{{{1
-    let lines = readfile(g:atv_snippet_albn_file)
-    let lnum = line(".")-1
-    call append(lnum,lines)
-    let pos = split(g:atv_snippet_albn_pos,',')
-    call cursor(lnum+pos[0],pos[1])
-endfunction "}}}1
-
 function s:AlB() "{{{1
     let lines = readfile(g:atv_snippet_alb_file)
     let lnum = line(".")-1
     call append(lnum,lines)
     let pos = split(g:atv_snippet_alb_pos,',')
+    call cursor(lnum+pos[0],pos[1])
+endfunction "}}}1
+
+function s:Fsm3() "{{{1
+    let lines = readfile(g:atv_snippet_fsm3_file)
+    let lnum = line(".")-1
+    call append(lnum,lines)
+    let pos = split(g:atv_snippet_fsm3_pos,',')
     call cursor(lnum+pos[0],pos[1])
 endfunction "}}}1
 

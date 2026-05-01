@@ -1,26 +1,26 @@
 "-----------------------------------------------------------------------------
 " Vim Plugin for Verilog Code Automactic Generation 
-" Author:         HonkW
-" Website:        https://honk.wang
-" Last Modified:  2022/09/04 00:06
+" Author:         Bright
+" Email:          guanghuikong@163.com
+" Last Modified:  2026/05/01 16:42
 " File:           automatic.vim
-" Note:           1. Auto function based on zhangguo's vimscript, heavily modified
-"                 2. Rtl Tree based on zhangguo's vimscript, slightly modified
+" Note:           1. Auto function based on Bright's vimscript, heavily modified
+"                 2. Rtl Tree based on Bright's vimscript, slightly modified
 "                    https://www.vim.org/scripts/script.php?script_id=4067 
 "------------------------------------------------------------------------------
 " Modification History:
 " Date          By              Version                 Change Description
 "------------------------------------------------------------------------------
-" 2021/3/26     HonkW           1.0.0                   First copy from zhangguo's vimscript
-" 2021/4/5      HonkW           1.0.1                   Finish AutoInst & Autopara
-" 2021/5/28     HonkW           1.1.0                   Optimize AutoInst & AutoPara
-" 2021/6/12     HonkW           1.1.2                   Prototype of AutoReg
-" 2021/8/1      HonkW           1.1.6                   Add modified verision of RtlTree
-" 2021/9/14     HonkW           1.2.4                   Prototype of AutoDef
-" 2021/11/20    HonkW           1.2.5                   Prototype of AutoArg
-" 2022/2/15     HonkW           1.2.6                   Prototype of filelist & tags support
-" 2022/05/18    HonkW           1.5                     Divide Auto Function into several .vim file
-" 2022/09/04    HonkW           1.5.x                   Add AutoAll and KillAutoAll
+" 2021/3/26     Bright           1.0.0                   First copy from Bright's vimscript
+" 2021/4/5      Bright           1.0.1                   Finish AutoInst & Autopara
+" 2021/5/28     Bright           1.1.0                   Optimize AutoInst & AutoPara
+" 2021/6/12     Bright           1.1.2                   Prototype of AutoReg
+" 2021/8/1      Bright           1.1.6                   Add modified verision of RtlTree
+" 2021/9/14     Bright           1.2.4                   Prototype of AutoDef
+" 2021/11/20    Bright           1.2.5                   Prototype of AutoArg
+" 2022/2/15     Bright           1.2.6                   Prototype of filelist & tags support
+" 2022/05/18    Bright           1.5                     Divide Auto Function into several .vim file
+" 2022/09/04    Bright           1.5.x                   Add AutoAll and KillAutoAll
 " For vim version 7.x or above
 "-----------------------------------------------------------------------------
 
@@ -79,6 +79,7 @@ function! s:AutoVerilogAll()
     call g:AutoDef()
     call g:AutoReg()
     call g:AutoWire()
+    call g:AutoLogic()
 endfunction
 
 function! s:KillAutoVerilogAll()
@@ -89,9 +90,9 @@ function! s:KillAutoVerilogAll()
     call g:KillAutoDef()
     call g:KillAutoReg()
     call g:KillAutoWire()
+    call g:KillAutoLogic()
 endfunction
 
 "}}}1
 
 runtime! plugin/automatic/*.vim
-

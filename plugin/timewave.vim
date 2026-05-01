@@ -1,10 +1,10 @@
 "-----------------------------------------------------------------------------
 " Vim Plugin for Verilog Code Automactic Generation 
-" Author:         HonkW
-" Website:        https://honk.wang
-" Last Modified:  2022/01/06 21:52
+" Author:         Bright
+" Email:          guanghuikong@163.com
+" Last Modified:  2026/05/01 16:42
 " File:           timewave.vim
-" Note:           Timewave function totally copy from zhangguo's vimscript,only add mapping
+" Note:           Timewave function totally copy from Bright's vimscript,only add mapping
 "------------------------------------------------------------------------------
 
 "Sanity checks 启动判断{{{1
