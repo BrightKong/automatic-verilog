@@ -1,12 +1,12 @@
 "-----------------------------------------------------------------------------
 " Vim Plugin for Verilog Code Automactic Generation 
-" Author:         HonkW
-" Website:        https://honk.wang
-" Last Modified:  2023/06/29 23:13
+" Author:         Bright
+" Email:          guanghuikong@163.com
+" Last Modified:  2026/05/01 16:42
 " File:           autodef.vim
-" Note:           AutoDef function partly from zhangguo's vimscript
+" Note:           AutoDef function partly from Bright's vimscript
 "                 Progress bar based off code from "progressbar widget" plugin by
-"                 Andreas Politz, slightly modified:
+"                 Bright, slightly modified:
 "                 http://www.vim.org/scripts/script.php?script_id=2006
 "------------------------------------------------------------------------------
 
@@ -29,6 +29,15 @@ let s:VlogTypePort = s:VlogTypePort . '\<inout\>'
 "Data 数据类型
 let s:VlogTypeData =                  '\<wire\>\|'
 let s:VlogTypeData = s:VlogTypeData . '\<reg\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<logic\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<bit\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<byte\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<shortint\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<int\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<longint\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<real\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<shortreal\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<time\>\|'
 let s:VlogTypeData = s:VlogTypeData . '\<parameter\>\|'
 let s:VlogTypeData = s:VlogTypeData . '\<localparam\>\|'
 let s:VlogTypeData = s:VlogTypeData . '\<defparam\>\|'
@@ -37,17 +46,30 @@ let s:VlogTypeData = s:VlogTypeData . '\<integer\>'
 
 "Calculation 计算类型
 let s:VlogTypeCalc =                  '\<assign\>\|'
-let s:VlogTypeCalc = s:VlogTypeCalc . '\<always\>'
+let s:VlogTypeCalc = s:VlogTypeCalc . '\<always\>\|'
+let s:VlogTypeCalc = s:VlogTypeCalc . '\<always_ff\>\|'
+let s:VlogTypeCalc = s:VlogTypeCalc . '\<always_comb\>\|'
+let s:VlogTypeCalc = s:VlogTypeCalc . '\<always_latch\>'
 
 "Structure 结构类型
 let s:VlogTypeStru =                  '\<module\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endmodule\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<interface\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endinterface\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<package\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endpackage\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<function\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endfunction\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<task\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endtask\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<class\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endclass\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<program\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endprogram\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<generate\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endgenerate\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<clocking\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endclocking\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<begin\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<end\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<case\>\|'
@@ -56,7 +78,13 @@ let s:VlogTypeStru = s:VlogTypeStru . '\<casez\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endcase\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<default\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<for\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<foreach\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<if\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<typedef\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<enum\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<struct\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<union\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<modport\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<define\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<ifdef\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<ifndef\>\|'
@@ -71,7 +99,10 @@ let s:VlogTypeOthe =                  '\<posedge\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<negedge\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<timescale\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<initial\>\|'
+let s:VlogTypeOthe = s:VlogTypeOthe . '\<final\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<forever\>\|'
+let s:VlogTypeOthe = s:VlogTypeOthe . '\<unique\>\|'
+let s:VlogTypeOthe = s:VlogTypeOthe . '\<priority\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<specify\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<endspecify\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<include\>\|'
@@ -112,6 +143,10 @@ let s:not_keywords_pattern = s:VlogKeyWords . '\@!\(\<\w\+\>\)'
 "+-----------------+--------------------------------------------------------------+
 "|    wire_del     |   add //WIRE_DEL if wire has been deleted from the module    |
 "+-----------------+--------------------------------------------------------------+
+"|    logic_new    | add //LOGIC_NEW if logic has been newly added to the module |
+"+-----------------+--------------------------------------------------------------+
+"|    logic_del    | add //LOGIC_DEL if logic has been deleted from the module   |
+"+-----------------+--------------------------------------------------------------+
 "| unresolved_flag |            add //unresolved if wire is unresolved            |
 "+-----------------+--------------------------------------------------------------+
 "|   reg_rmv_io    |               remove declared io from autoreg                |
@@ -132,6 +167,8 @@ let g:_ATV_AUTODEF_DEFAULTS = {
             \'reg_del':         1,
             \'wire_new':        1,
             \'wire_del':        1,
+            \'logic_new':       1,
+            \'logic_del':       1,
             \'unresolved_flag': 0,
             \'reg_rmv_io':      1,        
             \'wire_rmv_io':     1,
@@ -155,9 +192,11 @@ let s:atv_pb_en = 0
 amenu 9998.4.1 &Verilog.AutoDef.AutoDef()<TAB>                                   :call g:AutoDef()<CR>
 amenu 9998.4.2 &Verilog.AutoDef.AutoReg()<TAB>                                   :call g:AutoReg()<CR>
 amenu 9998.4.3 &Verilog.AutoDef.AutoWire()<TAB>                                  :call g:AutoWire()<CR>
-amenu 9998.4.4 &Verilog.AutoDef.KillAutoDef()<TAB>                               :call g:KillAutoDef()<CR>
-amenu 9998.4.5 &Verilog.AutoDef.KillAutoReg()<TAB>                               :call g:KillAutoReg()<CR>
-amenu 9998.4.6 &Verilog.AutoDef.KillAutoWire()<TAB>                              :call g:KillAutoWire()<CR>
+amenu 9998.4.4 &Verilog.AutoDef.AutoLogic()<TAB>                                 :call g:AutoLogic()<CR>
+amenu 9998.4.5 &Verilog.AutoDef.KillAutoDef()<TAB>                               :call g:KillAutoDef()<CR>
+amenu 9998.4.6 &Verilog.AutoDef.KillAutoReg()<TAB>                               :call g:KillAutoReg()<CR>
+amenu 9998.4.7 &Verilog.AutoDef.KillAutoWire()<TAB>                              :call g:KillAutoWire()<CR>
+amenu 9998.4.8 &Verilog.AutoDef.KillAutoLogic()<TAB>                             :call g:KillAutoLogic()<CR>
 
 if !hasmapto(':call g:AutoReg()<ESC>')
     map <S-F6>      :call g:AutoReg()<ESC>
@@ -167,6 +206,9 @@ if !hasmapto(':call g:AutoWire()<ESC>')
 endif
 if !hasmapto(':call g:AutoDef()<ESC>')
     map <S-F8>      :call g:AutoDef()<ESC>
+endif
+if !hasmapto(':call g:AutoLogic()<ESC>')
+    map <S-F9>      :call g:AutoLogic()<ESC>
 endif
 "}}}1
 
@@ -317,6 +359,66 @@ endfunction
 " Output:
 "   Formatted autodef code
 "---------------------------------------------------
+"AutoLogic automatic SystemVerilog logic{{{1
+"--------------------------------------------------
+" Function: AutoLogic
+" Input:
+"   N/A
+" Description:
+"   autologic all signals inferred from register and wire usage
+" Output:
+"   Formatted autologic code
+"---------------------------------------------------
+function g:AutoLogic() abort
+    "Record current position
+    let orig_idx = line('.')
+    let orig_col = col('.')
+
+    "AutoLogic all start from top line
+    call cursor(1,1)
+
+    while 1
+        "Put cursor to /*autologic*/ line
+        if search('\/\*autologic\*\/','W') == 0
+            break
+        endif
+
+        "read from current buffer
+        let lines = getline(1,line('$'))
+
+        "Get keep logic & update logic list
+        let [keep_logic_list,upd_logic_list] = s:GetDeclLogic(lines)
+
+        "Get logic names {name : value}
+        let logic_names = s:GetLogic(lines)
+
+        "Remove logic from logic_names that want to be keep when autologic
+        for name in keep_logic_list
+            if has_key(logic_names,name)
+                call remove(logic_names,name)
+            endif
+        endfor
+
+        "Kill all contents between //Start of automatic logic and //End of automatic logic
+        "Current position must be at /*autologic*/ line
+        call s:KillAutoLogic()
+
+        "Draw logic, use logic_names to cover update logic list
+        let lines = s:DrawLogic(logic_names,upd_logic_list)
+
+        "Append logic definition
+        call append(line('.'),lines)
+
+        "Only autologic once
+        break
+
+    endwhile
+
+    "cursor back
+    call cursor(orig_idx,orig_col)
+endfunction
+"}}}1
+
 function g:AutoDef() abort
     let prefix = s:st_prefix
 
@@ -324,6 +426,8 @@ function g:AutoDef() abort
     let orig_idx = line('.')
     let orig_col = col('.')
     let save_foldenable = &foldenable
+    let save_logic = g:atv_autodef_logic
+    let g:atv_autodef_logic = 0
     execute ':'.'let &foldenable=0'
 
     "AutoDef all start from top line
@@ -384,6 +488,7 @@ function g:AutoDef() abort
 
     "Put cursor back to original position
     let &foldenable = save_foldenable
+    let g:atv_autodef_logic = save_logic
     call cursor(orig_idx,orig_col)
 
     "Move other define down below //End of automatic define
@@ -476,6 +581,43 @@ endfunction
 " Output:
 "   Killed autodef code
 "---------------------------------------------------
+"KillAutoLogic Kill automatic logic{{{1
+"--------------------------------------------------
+" Function: KillAutoLogic
+" Input:
+"   N/A
+" Output:
+"   Killed autologic code
+"---------------------------------------------------
+function g:KillAutoLogic() abort
+
+    "Record current position
+    let orig_idx = line('.')
+    let orig_col = col('.')
+
+    "AutoLogic all start from top line
+    call cursor(1,1)
+
+    while 1
+        "Put cursor to /*autologic*/ line
+        if search('\/\*autologic\*\/','W') == 0
+            break
+        endif
+
+        "Kill all contents between //Start of automatic logic and //End of automatic logic
+        "Current position must be at /*autologic*/ line
+        call s:KillAutoLogic()
+
+        "only autologic once
+        break
+    endwhile
+
+    "cursor back
+    call cursor(orig_idx,orig_col)
+
+endfunction
+"}}}1
+
 function g:KillAutoDef() abort
     let prefix = s:st_prefix
 
@@ -594,7 +736,7 @@ function s:GetfReg(lines)
         endif
         let line = a:lines[idx-1]
         "find flip-flop reg
-        if line =~ '^\s*\<always\>\s*@\s*(\s*\<\(posedge\|negedge\)\>'
+        if line =~ '^\s*\<always\(_ff\)\?\>\s*@\s*(\s*\<\(posedge\|negedge\)\>'
             let idx_inblock = idx + 1
             "find signals in block
             while 1
@@ -687,10 +829,10 @@ function s:GetcReg(lines)
         endif
         let line = a:lines[idx-1]
         "ignore flip-flop reg
-        if line =~ '^\s*\<always\>\s*@\s*(\s*\<\(posedge\|negedge\)\>'
+        if line =~ '^\s*\<always\(_ff\)\?\>\s*@\s*(\s*\<\(posedge\|negedge\)\>'
 
         "find combination reg
-        elseif line =~ '^\s*\<always\>'
+        elseif line =~ '^\s*\<always\>\|^\s*\<always_comb\>\|^\s*\<always_latch\>'
             let idx_inblock = idx + 1
             "find signals in block
             while 1
@@ -819,8 +961,8 @@ function s:GetDeclReg(lines)
                         echohl ErrorMsg | echo "Error running GetDeclReg! Get //Start of automatic reg but abonormally quit!"| echohl None
                         break
                     "middle
-                    elseif line =~ '^\s*reg'
-                        let name = matchstr(line,'^\s*reg\s\+\(\[.*\]\)\?\s*\zs\w\+\ze')
+                    elseif line =~ '^\s*\(reg\|logic\|real\)'
+                        let name = matchstr(line,'^\s*\(reg\|logic\|real\)\s\+\(\[.*\]\)\?\s*\zs\w\+\ze')
                         call add(auto_reg,name)
                     endif
                 endwhile
@@ -831,8 +973,8 @@ function s:GetDeclReg(lines)
         endif
 
         "match reg[1:0]a; or reg b;
-        let reg_pattern = '^\s*reg\s*\(\[.\{-\}\]\)\s*.\{-\}\s*;\s*'.'\|'.'^\s*reg\s\+.\{-\}\s*;\s*'
-        let match_pattern = '^\s*reg\s*\(\[.\{-\}\]\)\s*\zs.\{-\}\ze\s*;\s*'.'\|'.'^\s*reg\s\+\zs.\{-\}\ze\s*;\s*'
+        let reg_pattern = '^\s*\(reg\|logic\|real\)\s*\(\[.\{-\}\]\)\s*.\{-\}\s*;\s*'.'\|'.'^\s*\(reg\|logic\|real\)\s\+.\{-\}\s*;\s*'
+        let match_pattern = '^\s*\(reg\|logic\|real\)\s*\(\[.\{-\}\]\)\s*\zs.\{-\}\ze\s*;\s*'.'\|'.'^\s*\(reg\|logic\|real\)\s\+\zs.\{-\}\ze\s*;\s*'
 
         while line =~ reg_pattern
             "delete abnormal
@@ -1242,6 +1384,21 @@ endfunction
 "    0     1            2      3               4            5                6             7
 "   [seqs, signal_name, lines, left_width_nrs, left_widths, right_width_nrs, right_widths, right_signal_link]
 "---------------------------------------------------
+"GetLogic get SystemVerilog logic{{{2
+"--------------------------------------------------
+" Function: GetLogic
+" Input:
+"   lines : all lines to get logic
+" Description:
+"   Merge register-like and wire-like inferred signals for AutoLogic.
+"---------------------------------------------------
+function s:GetLogic(lines)
+    let logic_names = s:GetReg(a:lines)
+    call extend(logic_names,s:GetWire(a:lines),'keep')
+    return logic_names
+endfunction
+"}}}2
+
 function s:GetaWire(lines)
     let idx = 1
     let seq = 0
@@ -1739,8 +1896,8 @@ function s:GetDeclWire(lines)
                         echohl ErrorMsg | echo "Error running GetDeclWire! Get //Start of automatic wire but abonormally quit!"| echohl None
                         break
                     "middle
-                    elseif line =~ '^\s*wire'
-                        let name = matchstr(line,'^\s*wire\s\+\(\[.*\]\)\?\s*\zs\w\+\ze')
+                    elseif line =~ '^\s*\(wire\|logic\|real\)'
+                        let name = matchstr(line,'^\s*\(wire\|logic\|real\)\s\+\(\[.*\]\)\?\s*\zs\w\+\ze')
                         call add(auto_wire,name)
                     endif
                 endwhile
@@ -1751,8 +1908,8 @@ function s:GetDeclWire(lines)
         endif
 
         "match wire[1:0]a; or wire b;
-        let wire_pattern = '^\s*wire\s*\(\[.\{-\}\]\)\s*.\{-\}\s*;\s*'.'\|'.'^\s*wire\s\+.\{-\}\s*;\s*'
-        let match_pattern = '^\s*wire\s*\(\[.\{-\}\]\)\s*\zs.\{-\}\ze\s*;\s*'.'\|'.'^\s*wire\s\+\zs.\{-\}\ze\s*;\s*'
+        let wire_pattern = '^\s*\(wire\|logic\|real\)\s*\(\[.\{-\}\]\)\s*.\{-\}\s*;\s*'.'\|'.'^\s*\(wire\|logic\|real\)\s\+.\{-\}\s*;\s*'
+        let match_pattern = '^\s*\(wire\|logic\|real\)\s*\(\[.\{-\}\]\)\s*\zs.\{-\}\ze\s*;\s*'.'\|'.'^\s*\(wire\|logic\|real\)\s\+\zs.\{-\}\ze\s*;\s*'
 
         while line =~ wire_pattern
             "delete abnormal
@@ -1802,6 +1959,84 @@ endfunction
 "   line after kill
 "   kill all between //Start of automatic wire & //End of automatic wire
 "---------------------------------------------------
+"AutoLogic-GetDecl
+"GetDeclLogic get declared logic{{{2
+"--------------------------------------------------
+" Function: GetDeclLogic
+" Input:
+"   lines : all lines
+" Output:
+"   decl_logic : signal declared outside /*autologic*/
+"   auto_logic : signal declared inside /*autologic*/
+"---------------------------------------------------
+function s:GetDeclLogic(lines)
+    let decl_logic = []
+    let auto_logic = []
+    let idx = 1
+
+    while idx < len(a:lines)
+        "skip comment line
+        let idx = g:AutoVerilog_SkipCommentLine(2,idx,a:lines)
+        if idx == -1
+            echohl ErrorMsg | echo "Error when SkipCommentLine! return -1"| echohl None
+        endif
+        let line = a:lines[idx-1]
+
+        "comment detect,judege if it's start
+        if line =~ '\/\/.*$'
+            if line =~ '\/\/Start of automatic logic'
+                "start of autologic
+                while 1
+                    let idx = idx + 1
+                    let line = getline(idx)
+                    "end of autologic
+                    if line =~ '\/\/End of automatic logic'
+                        break
+                    "abnormal end
+                    elseif line =~ 'endmodule' || idx == line('$')
+                        echohl ErrorMsg | echo "Error running GetDeclLogic! Get //Start of automatic logic but abonormally quit!"| echohl None
+                        break
+                    "middle
+                    elseif line =~ '^\s*\(logic\|real\)'
+                        let name = matchstr(line,'^\s*\(logic\|real\)\s\+\(\[.*\]\)\?\s*\zs\w\+\ze')
+                        call add(auto_logic,name)
+                    endif
+                endwhile
+            else
+                "delete comment
+                let line = substitute(line,'\/\/.*$','','')
+            endif
+        endif
+
+        "match logic/reg/wire/real declarations so AutoLogic does not duplicate manual declarations
+        let logic_pattern = '^\s*\(logic\|real\|reg\|wire\)\s*\(\[.\{-\}\]\)\s*.\{-\}\s*;\s*'.'\|'.'^\s*\(logic\|real\|reg\|wire\)\s\+.\{-\}\s*;\s*'
+        let match_pattern = '^\s*\(logic\|real\|reg\|wire\)\s*\(\[.\{-\}\]\)\s*\zs.\{-\}\ze\s*;\s*'.'\|'.'^\s*\(logic\|real\|reg\|wire\)\s\+\zs.\{-\}\ze\s*;\s*'
+
+        while line =~ logic_pattern
+            "delete abnormal
+            if line =~ '\<signed\>\|\<unsigned\>'
+                let line = substitute(line,'\<signed\>\|\<unsigned\>','','')
+            endif
+            let names = matchstr(line,match_pattern)
+            "in case style of logic a = {b,c,d};
+            let names = substitute(names,'\(\/\/\)\@<!=.*$','','')
+            "in case style of logic [1:0] a,b,c;
+            for name in split(names,',')
+                let name = matchstr(name,'\w\+')
+                if name != '' && index(decl_logic,name) == -1
+                    call add(decl_logic,name)
+                endif
+            endfor
+            let line = substitute(line,logic_pattern,'','')
+        endwhile
+
+        let idx = idx + 1
+    endwhile
+
+    return [decl_logic,auto_logic]
+endfunction
+"}}}2
+
 function s:KillAutoWire() 
     let orig_idx = line('.')
     let orig_col = col('.')
@@ -1871,6 +2106,60 @@ endfunction
 "   e.g
 "       wire  [WIDTH1:WIDTH2]     wire_name;
 "---------------------------------------------------
+"AutoLogic-Kill
+"KillAutoLogic delete automatic logic declarations{{{2
+"--------------------------------------------------
+" Function: KillAutoLogic
+" Input:
+"   Must put cursor to /*autologic*/ position
+" Output:
+"   line after kill
+"---------------------------------------------------
+function s:KillAutoLogic()
+    let orig_idx = line('.')
+    let orig_col = col('.')
+    let idx = line('.')
+    let line = getline(idx)
+    let kill_busy = 0
+    if line =~ '/\*\<autologic\>'
+        "keep current line
+        let idx = idx + 1
+        while 1
+            let line = getline(idx)
+            "start of autologic
+            if line =~ '\/\/Start of automatic logic'
+                execute ':'.idx.'d'
+                let kill_busy = 1
+            elseif kill_busy == 1
+                "end of autologic
+                if line =~ '\/\/End of automatic logic'
+                    execute ':'.idx.'d'
+                    break
+                "abnormal end
+                elseif line =~ 'endmodule' || idx == line('$')
+                    echohl ErrorMsg | echo "Error running KillAutoLogic! Kill abnormally till the end!"| echohl None
+                    break
+                "middle
+                else
+                    execute ':'.idx.'d'
+                endif
+            else
+                let idx = idx + 1
+                "never start, normal end
+                if line =~ 'endmodule' || idx == line('$')
+                    break
+                endif
+            endif
+        endwhile
+    else
+        echohl ErrorMsg | echo "Error running KillAutoLogic! Kill line not match /*autologic*/ !"| echohl None
+    endif
+
+    "cursor back
+    call cursor(orig_idx,orig_col)
+endfunction
+"}}}2
+
 function s:DrawWire(wire_names,wire_list)
     let prefix = s:st_prefix
     let wire_list = copy(a:wire_list)
@@ -2118,6 +2407,151 @@ function s:DrawWire(wire_names,wire_list)
 
     return lines
 
+endfunction
+"}}}2
+
+"AutoLogic-Draw
+"DrawLogic output SystemVerilog logic declarations{{{2
+"--------------------------------------------------
+" Function: DrawLogic
+" Input:
+"   logic_names : new logic names for align
+"   logic_list  : old logic name list
+" Output:
+"   line that's aligned
+"---------------------------------------------------
+function s:GetLogicDeclType(value)
+    if a:value[1] == 'real'
+        return 'real'
+    endif
+    return 'logic'
+endfunction
+
+function s:BuildLogicDeclLine(value,max_lname_len,max_rsemicol_len)
+    let prefix = s:st_prefix
+    let dtype = s:GetLogicDeclType(a:value)
+    let width = a:value[2]
+    let name = a:value[3]
+    let width2name_len = max([0,a:max_lname_len-len(prefix)-len(width)-len(dtype)-len(' ')])
+    let width2name = repeat(' ',width2name_len)
+    if g:atv_autodef_tail_nalign == 1
+        let name2semicol = ''
+    else
+        let name2semicol = repeat(' ',max([0,a:max_rsemicol_len-a:max_lname_len-len(name)]))
+    endif
+    return prefix.dtype.' '.width.width2name.name.name2semicol.';'
+endfunction
+
+function s:AddLogicDeclLine(lines,value,logic_list,logic_list_empty,max_lname_len,max_rsemicol_len)
+    let line = s:BuildLogicDeclLine(a:value,a:max_lname_len,a:max_rsemicol_len)
+    let logic_list = a:logic_list
+    let name = a:value[3]
+
+    if a:logic_list_empty == 0
+        let logic_idx = index(logic_list,name)
+        if logic_idx == -1
+            if g:atv_autodef_logic_new == 1
+                let line = line . ' // LOGIC_NEW'
+            endif
+        else
+            call remove(logic_list,logic_idx)
+        endif
+    endif
+
+    if g:atv_autodef_unresolved_flag == 1
+        let resolved = a:value[4]
+        if resolved == 0
+            let line = line.'// unresolved'
+        endif
+    endif
+
+    call add(a:lines,line)
+endfunction
+
+function s:DrawLogic(logic_names,logic_list)
+    let prefix = s:st_prefix
+    let logic_list = copy(a:logic_list)
+
+    "guarantee spaces width{{{3
+    let max_lname_len = 0
+    let max_rsemicol_len = 0
+    for name in keys(a:logic_names)
+        let value = a:logic_names[name]
+        let sig_type = value[0]
+        if sig_type == 'reg' || sig_type == 'wire'
+            let dtype = s:GetLogicDeclType(value)
+            let name = value[3]
+            let width = value[2]
+            let max_lname_len = max([max_lname_len,len(prefix)+len(dtype)+len(' ')+len(width)+4,g:atv_autodef_name_pos])
+            let max_rsemicol_len = max([max_rsemicol_len,max_lname_len+len(name)+4,g:atv_autodef_sym_pos])
+        endif
+    endfor
+    "}}}3
+
+    let lines = []
+    let logic_list_empty = (logic_list == []) ? 1 : 0
+
+    "recover logic sequences{{{3
+    let freg_seqs = {}
+    let creg_seqs = {}
+    let awire_seqs = {}
+    let iwire_seqs = {}
+    for name in keys(a:logic_names)
+        let value = a:logic_names[name]
+        let sig_type = value[0]
+        let stype = value[1]
+        let seq = value[5]
+        if sig_type == 'reg'
+            if stype == 'freg'
+                call extend(freg_seqs,{seq : value})
+            elseif stype == 'creg'
+                call extend(creg_seqs,{seq : value})
+            endif
+        elseif sig_type == 'wire'
+            if stype == 'awire'
+                call extend(awire_seqs,{seq : value})
+            elseif stype == 'iwire' || stype == 'logic' || stype == 'real'
+                call extend(iwire_seqs,{seq : value})
+            endif
+        endif
+    endfor
+    "}}}3
+
+    call add(lines,prefix.'//Start of automatic logic')
+    call add(lines,prefix.'//Define flip-flop logic here')
+    for seq in sort(map(keys(freg_seqs),'str2nr(v:val)'),g:atv_sort_funcref)
+        call s:AddLogicDeclLine(lines,freg_seqs[seq],logic_list,logic_list_empty,max_lname_len,max_rsemicol_len)
+    endfor
+
+    call add(lines,prefix.'//Define combination logic here')
+    for seq in sort(map(keys(creg_seqs),'str2nr(v:val)'),g:atv_sort_funcref)
+        call s:AddLogicDeclLine(lines,creg_seqs[seq],logic_list,logic_list_empty,max_lname_len,max_rsemicol_len)
+    endfor
+
+    call add(lines,prefix.'//Define assign logic here')
+    for seq in sort(map(keys(awire_seqs),'str2nr(v:val)'),g:atv_sort_funcref)
+        call s:AddLogicDeclLine(lines,awire_seqs[seq],logic_list,logic_list_empty,max_lname_len,max_rsemicol_len)
+    endfor
+
+    call add(lines,prefix.'//Define instance logic here')
+    for seq in sort(map(keys(iwire_seqs),'str2nr(v:val)'),g:atv_sort_funcref)
+        call s:AddLogicDeclLine(lines,iwire_seqs[seq],logic_list,logic_list_empty,max_lname_len,max_rsemicol_len)
+    endfor
+
+    if logic_list != [] && g:atv_autodef_logic_del == 1
+        for name in logic_list
+            let line = prefix.'//LOGIC_DEL: Logic '.name.' has been deleted.'
+            call add(lines,line)
+        endfor
+    endif
+
+    call add(lines,prefix.'//End of automatic logic')
+
+    if lines == []
+        echohl ErrorMsg | echo "Error logic_names input for function DrawLogic! logic_names is empty!" | echohl None
+    endif
+
+    return lines
 endfunction
 "}}}2
 
@@ -3225,8 +3659,8 @@ endfunction
 "}}}1
 
 "Progressbar in the statusline 进度条显示{{{1
-"Author      : politza@fh-trier.de
-"Last change : 2007-09-01
+"Author      : guanghuikong@163.com
+"Last change : 2026/05/01
 "Version     : 1.0
 if exists('*vim#widgets#progressbar#NewSimpleProgressBar')
     delfunction vim#widgets#progressbar#NewSimpleProgressBar
@@ -3335,4 +3769,3 @@ endfun
 let &cpo=s:cpo
 unlet s:cpo
 "}}}1
-

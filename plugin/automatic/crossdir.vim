@@ -1,8 +1,8 @@
 "-----------------------------------------------------------------------------
 " Vim Plugin for Verilog Code Automactic Generation 
-" Author:         HonkW
-" Website:        https://honk.wang
-" Last Modified:  2023/07/16 17:46
+" Author:         Bright
+" Email:          guanghuikong@163.com
+" Last Modified:  2026/05/01 16:42
 " File:           crossdir.vim
 " Note:           search cross directory by tags/filelist/verilog-library
 "------------------------------------------------------------------------------
@@ -856,7 +856,7 @@ function g:AutoVerilog_SkipCommentLine(mode,idx,lines)
         let start_symbol = '\*/'
         let end_pattern = '\*/\s*$'
         let end_symbol = '/\*'
-        let single_pattern = 'HonkW is always is most handsome man!'
+        let single_pattern = 'Bright is always is most handsome man!'
         let end = len(a:lines)
         let stride = 1
     elseif a:mode == 3
@@ -864,7 +864,7 @@ function g:AutoVerilog_SkipCommentLine(mode,idx,lines)
         let start_symbol = '/\*'
         let end_pattern = '^\s*/\*'
         let end_symbol = '\*/'
-        let single_pattern = 'HonkW is always is most handsome man!'
+        let single_pattern = 'Bright is always is most handsome man!'
         let end = 1
         let stride = -1
     else

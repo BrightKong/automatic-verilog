@@ -1,10 +1,10 @@
 "-----------------------------------------------------------------------------
 " Vim Plugin for Verilog Code Automactic Generation 
-" Author:         HonkW
-" Website:        https://honk.wang
-" Last Modified:  2023/08/03 18:12
+" Author:         Bright
+" Email:          guanghuikong@163.com
+" Last Modified:  2026/05/01 16:42
 " File:           autoinst.vim
-" Note:           AutoInst function partly from zhangguo's vimscript
+" Note:           AutoInst function partly from Bright's vimscript
 "------------------------------------------------------------------------------
 
 "Sanity checks 启动判断{{{1
@@ -26,6 +26,15 @@ let s:VlogTypePort = s:VlogTypePort . '\<inout\>'
 "Data 数据类型
 let s:VlogTypeData =                  '\<wire\>\|'
 let s:VlogTypeData = s:VlogTypeData . '\<reg\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<logic\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<bit\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<byte\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<shortint\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<int\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<longint\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<real\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<shortreal\>\|'
+let s:VlogTypeData = s:VlogTypeData . '\<time\>\|'
 let s:VlogTypeData = s:VlogTypeData . '\<parameter\>\|'
 let s:VlogTypeData = s:VlogTypeData . '\<localparam\>\|'
 let s:VlogTypeData = s:VlogTypeData . '\<defparam\>\|'
@@ -34,17 +43,30 @@ let s:VlogTypeData = s:VlogTypeData . '\<integer\>'
 
 "Calculation 计算类型
 let s:VlogTypeCalc =                  '\<assign\>\|'
-let s:VlogTypeCalc = s:VlogTypeCalc . '\<always\>'
+let s:VlogTypeCalc = s:VlogTypeCalc . '\<always\>\|'
+let s:VlogTypeCalc = s:VlogTypeCalc . '\<always_ff\>\|'
+let s:VlogTypeCalc = s:VlogTypeCalc . '\<always_comb\>\|'
+let s:VlogTypeCalc = s:VlogTypeCalc . '\<always_latch\>'
 
 "Structure 结构类型
 let s:VlogTypeStru =                  '\<module\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endmodule\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<interface\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endinterface\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<package\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endpackage\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<function\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endfunction\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<task\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endtask\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<class\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endclass\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<program\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endprogram\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<generate\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endgenerate\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<clocking\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<endclocking\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<begin\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<end\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<case\>\|'
@@ -53,7 +75,13 @@ let s:VlogTypeStru = s:VlogTypeStru . '\<casez\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<endcase\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<default\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<for\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<foreach\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<if\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<typedef\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<enum\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<struct\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<union\>\|'
+let s:VlogTypeStru = s:VlogTypeStru . '\<modport\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<define\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<ifdef\>\|'
 let s:VlogTypeStru = s:VlogTypeStru . '\<ifndef\>\|'
@@ -68,7 +96,10 @@ let s:VlogTypeOthe =                  '\<posedge\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<negedge\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<timescale\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<initial\>\|'
+let s:VlogTypeOthe = s:VlogTypeOthe . '\<final\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<forever\>\|'
+let s:VlogTypeOthe = s:VlogTypeOthe . '\<unique\>\|'
+let s:VlogTypeOthe = s:VlogTypeOthe . '\<priority\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<specify\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<endspecify\>\|'
 let s:VlogTypeOthe = s:VlogTypeOthe . '\<include\>\|'
@@ -530,6 +561,8 @@ function g:AutoVerilog_GetIO(lines,mode)
                     let type = 'real'
                 elseif line =~ '\<logic\>'
                     let type = 'logic'
+                elseif line =~ '\<bit\>'
+                    let type = 'logic'
                 endif
 
                 "io direction input/output/inout
@@ -559,7 +592,7 @@ function g:AutoVerilog_GetIO(lines,mode)
 
                 "name
                 let line = substitute(line,io_dir,'','')
-                let line = substitute(line,'\<reg\>\|\<wire\>\|\<real\>\|\<logic\>','','')
+                let line = substitute(line,'\<reg\>\|\<wire\>\|\<real\>\|\<logic\>\|\<bit\>\|\<byte\>\|\<shortint\>\|\<int\>\|\<longint\>\|\<shortreal\>\|\<time\>','','')
                 let line = substitute(line,'\[.\{-\}\]','','')
 
                 "ignore list like input [7:0] a[7:0];
@@ -1446,4 +1479,3 @@ endfunction
 "}}}2
 
 "}}}1
-
