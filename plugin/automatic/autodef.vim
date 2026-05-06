@@ -1997,8 +1997,8 @@ function s:GetDeclLogic(lines)
                         echohl ErrorMsg | echo "Error running GetDeclLogic! Get //Start of automatic logic but abonormally quit!"| echohl None
                         break
                     "middle
-                    elseif line =~ '^\s*\(logic\|real\)'
-                        let name = matchstr(line,'^\s*\(logic\|real\)\s\+\(\[.*\]\)\?\s*\zs\w\+\ze')
+                    elseif line =~ '^\s*\(logic\|wire\|real\)'
+                        let name = matchstr(line,'^\s*\(logic\|wire\|real\)\s\+\(\[.*\]\)\?\s*\zs\w\+\ze')
                         call add(auto_logic,name)
                     endif
                 endwhile
@@ -2411,7 +2411,7 @@ endfunction
 "}}}2
 
 "AutoLogic-Draw
-"DrawLogic output SystemVerilog logic declarations{{{2
+"DrawLogic output SystemVerilog logic/wire declarations{{{2
 "--------------------------------------------------
 " Function: DrawLogic
 " Input:
@@ -2423,6 +2423,9 @@ endfunction
 function s:GetLogicDeclType(value)
     if a:value[1] == 'real'
         return 'real'
+    endif
+    if a:value[0] == 'wire' && a:value[1] == 'awire'
+        return 'wire'
     endif
     return 'logic'
 endfunction
@@ -2528,7 +2531,7 @@ function s:DrawLogic(logic_names,logic_list)
         call s:AddLogicDeclLine(lines,creg_seqs[seq],logic_list,logic_list_empty,max_lname_len,max_rsemicol_len)
     endfor
 
-    call add(lines,prefix.'//Define assign logic here')
+    call add(lines,prefix.'//Define assign wire here')
     for seq in sort(map(keys(awire_seqs),'str2nr(v:val)'),g:atv_sort_funcref)
         call s:AddLogicDeclLine(lines,awire_seqs[seq],logic_list,logic_list_empty,max_lname_len,max_rsemicol_len)
     endfor
